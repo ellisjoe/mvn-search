@@ -15,3 +15,8 @@ com.github.cowwoc.requirements:guava:6.0.4
 com.google.guava:guava:29.0-jre
 org.xbib:guava:28.1
 ```
+
+Installation
+============
+Running `./gradlew install` will install the `mvn-search` binary in
+`/usr/local/bin`.

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.google.common.escape.Escaper;
+import com.google.common.net.UrlEscapers;
 import org.immutables.value.Value;
 
 import java.io.IOException;
@@ -19,6 +21,7 @@ public final class MavenCentral implements Repository {
     private static final ObjectMapper mapper = new ObjectMapper()
             .registerModule(new GuavaModule())
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    public static final Escaper urlEscaper = UrlEscapers.urlPathSegmentEscaper();
 
     public MavenCentral() {}
 
@@ -27,7 +30,7 @@ public final class MavenCentral implements Repository {
         try {
             String uri = new StringBuilder()
                     .append("https://search.maven.org/solrsearch/select")
-                    .append("?q=" + query)
+                    .append("?q=" + urlEscaper.escape(query))
                     .append("&start=0")
                     .append("&rows=20")
                     .toString();

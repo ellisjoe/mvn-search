@@ -13,6 +13,7 @@ repositories {
 group 'com.ellisjoe'
 
 dependencies {
+    implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.11.1'
     implementation 'com.google.guava:guava:29.0-jre'

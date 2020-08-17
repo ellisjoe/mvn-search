@@ -8,6 +8,7 @@ import org.jsoup.select.Elements;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static java.util.stream.Collectors.toList;
 
@@ -30,23 +31,29 @@ public final class MvnRepository implements Repository {
                 .build();
         String response = HttpClient.request(request);
 
-        return Jsoup.parse(response)
+        List<CompletableFuture<Result>> results = Jsoup.parse(response)
                 .getElementById("maincontent")
                 .getElementsByClass("im")
                 .stream()
                 .flatMap(e -> e.getElementsByClass("im-subtitle").stream())
                 .map(e -> e.select("a"))
                 .map(SearchResult::from)
-                .map(e -> Result.of(e.group(), e.artifact(), getVersion(e)))
+                .map(e -> getVersion(e).thenApply(v -> Result.of(e.group(), e.artifact(), v)))
+                .collect(toList());
+        return results.stream()
+                .map(CompletableFuture::join)
                 .collect(toList());
     }
 
-    private static String getVersion(SearchResult result) {
+    private static CompletableFuture<String> getVersion(SearchResult result) {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(MVN_REPO_URL + result.artfactRef()))
                 .build();
-        String response = HttpClient.request(request);
+        return HttpClient.asyncRequest(request).thenApply(MvnRepository::parseVersion);
+    }
+
+    private static String parseVersion(String response) {
         return Jsoup.parse(response)
                 .getElementsByClass("vbtn release")
                 .get(0)

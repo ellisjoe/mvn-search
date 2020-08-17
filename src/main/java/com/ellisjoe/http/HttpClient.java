@@ -6,6 +6,7 @@ import com.google.common.net.UrlEscapers;
 import java.io.IOException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 
 public final class HttpClient {
     private static final Escaper urlEscaper = UrlEscapers.urlPathSegmentEscaper();
@@ -19,6 +20,10 @@ public final class HttpClient {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static CompletableFuture<String> asyncRequest(HttpRequest request) {
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body);
     }
 
     public static String escape(String param) {

@@ -22,7 +22,7 @@ org.assertj:assertj-guava:3.4.0
 
 Options
 =======
-There is build-in support for searching either [MvnRepository](https://mvnrepository.com/) (default) or 
+There is built-in support for searching either [MvnRepository](https://mvnrepository.com/) (default) or 
 [Maven Central](https://search.maven.org/) which can be toggled using the `-r` or `--repository` flags:
 ```
 $ mvn-search -r mvn-repo <query>
